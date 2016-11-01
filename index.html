@@ -8,10 +8,7 @@
 		display: inline-block;
 		width:50px;
 		height: 50px;
-		background-color: white;
 		border-radius: 50%;
-	}
-	.row{
 	}
 	.container {
 		padding:40px;
@@ -121,6 +118,54 @@
     </div>
 	<script>
 
+
+
+
+	var cells = document.getElementsByClassName("cell");
+
+	for(var i = 0; i < cells.length; i++){
+		cells[i].style.backgroundColor = "white";
+		cells[i].addEventListener("mouseover", selectCel);
+		cells[i].addEventListener("mouseout", deselectCel);
+		cells[i].addEventListener("click", moveCel);
+		cells[i].myIndex = i;
+	}
+	function selectCel(e){
+		var index = e.target.myIndex % 7;
+		cells[index].style.background = "yellow";
+	}
+	function deselectCel(e){
+		var index = e.target.myIndex % 7;
+		cells[index].style.background = "white";
+	}
+
+	function moveCel(e){
+		// get the index of cell in the first row;
+		var index = e.target.myIndex % 7;
+		var curCel = cells[index];
+		while(!isFull(curCel)){
+			var nextIndex = index + 7;
+			if(nextIndex > cells.length){
+				curCel.style.backgroundColor = "red";
+			} else if(isFull(cells[nextIndex])){
+				curCel.style.backgroundColor = "red";
+			} else {
+				index += 7;
+				curCel = cells[index];
+			}
+		}
+	}
+
+	function isFull(el){
+		var color = el.style.backgroundColor;
+		if(color == "white" || color == "yellow"){
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	
 	</script>
 </body>
 </html>
