@@ -52,7 +52,7 @@
      <div class="cell">
     </div>
     </div>
-        <div class="row">
+    <div class="row">
             <div class="cell">
     </div>
      <div class="cell">
@@ -116,54 +116,141 @@
      <div class="cell">
     </div>
     </div>
-	<script>
+    <script src="main.js">
+    
+	</script>
+    <script>
+ //    const INFO = 1;
+ //    const HUMAN = 2;
+ //    const AI = 3;
+ //    const COLORS = ['white','yellow','red', 'teal'];
+ //    var board = [];
+ //    var turn = 0;
+
+ //    var cells = document.getElementsByClassName("cell");
+
+ //    function takeTurns(){
+ //        if(turn == 0){
+ //             for(var i = 0; i < cells.length; i++){
+ //                cells[i].addEventListener("mouseover", selectCel);
+ //                cells[i].addEventListener("mouseout", deselectCel);
+ //                cells[i].addEventListener("click", handleMove);
+ //                cells[i].myIndex = i;
+ //            }
+ //        } else {
+ //            computer();
+ //        }
+ //    }
+   
+
+ //    init();
 
 
 
+ //    // human player functions
+ //    function drawBoard(){
+ //        for(var i = 0; i < cells.length; i++){
+ //                var color = COLORS[board[i]];
+ //                cells[i].style.backgroundColor = color;
+ //        } 
+ //    }
 
-	var cells = document.getElementsByClassName("cell");
+ //    function init(){
+ //        for(var i = 0; i < 6 * 7; i++){
+ //                board[i] = 0;
+ //            }
+ //        drawBoard();
+ //        takeTurns();
+ //    }
 
-	for(var i = 0; i < cells.length; i++){
-		cells[i].style.backgroundColor = "white";
-		cells[i].addEventListener("mouseover", selectCel);
-		cells[i].addEventListener("mouseout", deselectCel);
-		cells[i].addEventListener("click", moveCel);
-		cells[i].myIndex = i;
-	}
-	function selectCel(e){
-		var index = e.target.myIndex % 7;
-		cells[index].style.background = "yellow";
-	}
-	function deselectCel(e){
-		var index = e.target.myIndex % 7;
-		cells[index].style.background = "white";
-	}
+ //    function selectCel(e){
+ //     var index = e.target.myIndex % 7;
+ //     board[index] = INFO;
+ //     drawBoard();
+ //    }
+ //    function deselectCel(e){
+ //     var index = e.target.myIndex % 7;
+ //     board[index] = 0;
+ //     drawBoard();
+ //    }
+ //    function handleMove(e){
+ //        var index = e.target.myIndex % 7;
+ //        moveCel(index, HUMAN);
+ //    }
+ //    function moveCel(index, player){
+ //     // get the index of cell in the first row;
+ //     var cur = board[index];
+ //     while(!isTaken(cur)){
+ //         var nextIndex = index + 7;
+ //         if(nextIndex >= board.length || isTaken(board[nextIndex])){
+ //             board[index] = player;
+ //             cur = board[index];
+ //             turn = 1 - turn;
+ //             console.log("now is computer")
+ //         } else {
+ //            index += 7;
+ //            cur = board[index];
+ //         }    
+ //     }
+ //     drawBoard();
+ //     takeTurns();
+ //    }
 
-	function moveCel(e){
-		// get the index of cell in the first row;
-		var index = e.target.myIndex % 7;
-		var curCel = cells[index];
-		while(!isFull(curCel)){
-			var nextIndex = index + 7;
-			if(nextIndex > cells.length){
-				curCel.style.backgroundColor = "red";
-			} else if(isFull(cells[nextIndex])){
-				curCel.style.backgroundColor = "red";
-			} else {
-				index += 7;
-				curCel = cells[index];
-			}
-		}
-	}
+ //    function isTaken(x){
+ //        return x == HUMAN || x == AI;
+ //    }
 
-	function isFull(el){
-		var color = el.style.backgroundColor;
-		if(color == "white" || color == "yellow"){
-			return false;
-		} else {
-			return true;
-		}
-	}
+
+ //    function computer(){
+ //        var col = Math.floor(Math.random()* 7);
+ //        console.log(col);
+ //        moveCel(col, AI);
+ //    }
+
+	// // var cells = document.getElementsByClassName("cell");
+
+	// // for(var i = 0; i < cells.length; i++){
+	// // 	cells[i].style.backgroundColor = "white";
+	// // 	cells[i].addEventListener("mouseover", selectCel);
+	// // 	cells[i].addEventListener("mouseout", deselectCel);
+	// // 	cells[i].addEventListener("click", moveCel);
+	// // 	cells[i].myIndex = i;
+	// // }
+	// // function selectCel(e){
+	// // 	var index = e.target.myIndex % 7;
+	// // 	cells[index].style.background = "yellow";
+	// // }
+	// // function deselectCel(e){
+	// // 	var index = e.target.myIndex % 7;
+	// // 	cells[index].style.background = "white";
+	// // }
+
+	// // function moveCel(e){
+	// // 	// get the index of cell in the first row;
+	// // 	var index = e.target.myIndex % 7;
+	// // 	var curCel = cells[index];
+	// // 	while(!isFull(curCel)){
+	// // 		var nextIndex = index + 7;
+	// // 		if(nextIndex >= cells.length){
+	// // 			curCel.style.backgroundColor = "red";
+	// // 		} else if(isFull(cells[nextIndex])){
+	// // 			curCel.style.backgroundColor = "red";
+	// // 		} else {
+	// // 			index += 7;
+	// // 			curCel = cells[index];
+	// // 		}
+	// // 	}
+	// // }
+
+	// // function isFull(el){
+	// // 	console.log(el);
+	// // 	var color = el.style.backgroundColor;
+	// // 	if(color == "white" || color == "yellow"){
+	// // 		return false;
+	// // 	} else {
+	// // 		return true;
+	// // 	}
+	// // }
 
 	
 	</script>
