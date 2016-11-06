@@ -1,11 +1,12 @@
 const COLORS = ['white', 'yellow', 'red', 'teal'];
-const HUMAN = 2;
-const AI = 3;
+const HUMAN = 1;
+const AI = 2;
+
 
 var Game = function() {
 	var that = this;
 	this.board = [];
-	this.turn = 0;
+	this.turn = 0;  // 0 for human, 1 for ai;
 	this.init = function(){
 	  for(var i = 0; i < 6; i++)
 	  {
@@ -33,14 +34,28 @@ var Game = function() {
 		var c = e.target.myIndex[1];
 		that.handleMove(c, HUMAN);
 		}
-		that.AIMove(c);
-		
+		var random =Math.floor(Math.random()*that.getEmpty().length);
+		that.AIMove(that.getEmpty()[random]);
 	}
 
 	this.AIMove = function(c){
 		if(this.turn == 1){
 			this.handleMove(c, AI);
 		}
+	}
+
+	this.getEmpty = function(){
+		var arr = [];
+		for(var i = 0; i < 6; i++)
+	  {
+		for(var j = 0; j < 7; j++)
+		{
+			if(this.board[i][j] == 0){
+				arr.push(j);
+			}
+		}
+	  }
+	  return arr;
 	}
 
 	this.handleMove = function(c, player){
@@ -55,14 +70,27 @@ var Game = function() {
 		this.drawBoard();
 		console.log("check");
 		if(this.checkWin()){
-			this.drawBoard();
 			console.log("win");
+			this.showInfo();
 		}
 	}
+
+	this.showInfo = function(){
+		var info = document.getElementById('info');
+		if(this.winner == HUMAN){
+		   info.innerHTML = "You win";
+		} else {
+			info.innerHTML = "You lose";
+		}
+		
+	}
+
 
 	this.isTaken = function(r, c){
 		return this.board[r][c] == HUMAN || this.board[r][c] == AI;
 	}
+
+	this.winner = null;
 
 	this.checkWin = function(){
 		// horizontal
@@ -73,6 +101,7 @@ var Game = function() {
 					this.board[i][j+2] == this.board[i][j+3])
 				{
 					this.turn = -1;
+					this.winner = this.board[i][j];
 					return true;		
 				}
 			}
@@ -87,6 +116,7 @@ var Game = function() {
 					&& this.board[i+2][j] == this.board[i+3][j])
 				{
 					this.turn = -1;
+					this.winner = this.board[i][j];
 					return true;
 				}
 			}
@@ -101,6 +131,7 @@ var Game = function() {
 					this.board[i+1][j+1] == this.board[i+2][j+2]
 					&& this.board[i+3][j+3]){
 					this.turn = -1;
+			     	this.winner = this.board[i][j];
 				    return true;
 				}
 			}
@@ -112,6 +143,7 @@ var Game = function() {
 					&& this.board[i+1][j-1] == this.board[i+2][j-2]
 					&& this.board[i+2][j-2] == this.board[i+3][j-3]){
 					this.turn = -1;
+				    this.winner = this.board[i][j];
 				    return true;
 				}
 			}
@@ -120,9 +152,6 @@ var Game = function() {
 	}
 
 };
-
-
-
 
 
 var game = new Game();

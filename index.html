@@ -2,257 +2,229 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>Connect 4</title>
-	<style>
-	.cell{
-		display: inline-block;
-		width:50px;
-		height: 50px;
-		border-radius: 50%;
-	}
-	.container {
-		padding:40px;
-		background-color: blue;
-		width:50%;
-		text-align: center;
-	}
-	</style>
+	<title>Document</title>
 </head>
 <body>
-    <div class="container">
-    <div class="row">
-    <div class="cell">
-    </div>
-     <div class="cell">
-    </div>
-     <div class="cell">
-    </div>
-     <div class="cell">
-    </div>
-     <div class="cell">
-    </div>
-     <div class="cell">
-    </div>
-     <div class="cell">
-    </div>
-    </div>
-   <div class="row">
-       <div class="cell">
-    </div>
-     <div class="cell">
-    </div>
-     <div class="cell">
-    </div>
-     <div class="cell">
-    </div>
-     <div class="cell">
-    </div>
-     <div class="cell">
-    </div>
-     <div class="cell">
-    </div>
-    </div>
-    <div class="row">
-            <div class="cell">
-    </div>
-     <div class="cell">
-    </div>
-     <div class="cell">
-    </div>
-     <div class="cell">
-    </div>
-     <div class="cell">
-    </div>
-     <div class="cell">
-    </div>
-     <div class="cell">
-    </div>
-    </div>
-   <div class="row">
-       <div class="cell">
-    </div>
-     <div class="cell">
-    </div>
-     <div class="cell">
-    </div>
-     <div class="cell">
-    </div>
-     <div class="cell">
-    </div>
-     <div class="cell">
-    </div>
-     <div class="cell">
-    </div>
-    </div>
-        <div class="row">
-            <div class="cell">
-    </div>
-     <div class="cell">
-    </div>
-     <div class="cell">
-    </div>
-     <div class="cell">
-    </div>
-     <div class="cell">
-    </div>
-     <div class="cell">
-    </div>
-     <div class="cell">
-    </div>
-    </div>
-   <div class="row">
-       <div class="cell">
-    </div>
-     <div class="cell">
-    </div>
-     <div class="cell">
-    </div>
-     <div class="cell">
-    </div>
-     <div class="cell">
-    </div>
-     <div class="cell">
-    </div>
-     <div class="cell">
-    </div>
-    </div>
-    <script src="main.js">
-    
-	</script>
-    <script>
- //    const INFO = 1;
- //    const HUMAN = 2;
- //    const AI = 3;
- //    const COLORS = ['white','yellow','red', 'teal'];
- //    var board = [];
- //    var turn = 0;
+<p id="info"></p>
+<canvas id="mycanvas"></canvas>
+<script src="http://pixijs.download/release/pixi.js"></script>
+<script>
 
- //    var cells = document.getElementsByClassName("cell");
+const colors = [0xffffff, 0xfffff, 0xff0000];
+const HUMAN = 1;
+const AI = 2;
 
- //    function takeTurns(){
- //        if(turn == 0){
- //             for(var i = 0; i < cells.length; i++){
- //                cells[i].addEventListener("mouseover", selectCel);
- //                cells[i].addEventListener("mouseout", deselectCel);
- //                cells[i].addEventListener("click", handleMove);
- //                cells[i].myIndex = i;
- //            }
- //        } else {
- //            computer();
- //        }
- //    }
-   
+var Game = function() {
+	var that = this;
+	this.board = [];
+	this.turn = 0;  // 0 for human, 1 for ai;
+	this.init = function(){
+	  for(var i = 0; i < 6; i++)
+	  {
+		this.board[i] = [];
+		for(var j = 0; j < 7; j++)
+		{
+			this.board[i][j] = 0;
+		}
+	  }
+	};
 
- //    init();
+	this.handleAIMove = function(c){
+		if(this.turn == 1){
+			var random =Math.floor(Math.random()*this.getEmpty().length);
+			this.handleMove(this.getEmpty()[random], AI);
+		}
+	}
 
+	this.getEmpty = function(){
+		var arr = [];
+		for(var i = 0; i < 6; i++)
+	  {
+		for(var j = 0; j < 7; j++)
+		{
+			if(this.board[i][j] == 0){
+				arr.push(j);
+			}
+		}
+	  }
+	  return arr;
+	}
 
+	this.handleMove = function(c, player){
+		var r = 0;
+		while(r < 6 && !this.isTaken(r, c)){
+			r += 1;
+		}
+		if (r != 0) {
+		   this.board[r-1][c] = player; 
+		   this.turn = 1 - this.turn;
+		}
+		
+		console.log("check");
+		if(this.checkWin()){
+			console.log("win");
+			this.showInfo();
+		}
+	}
 
- //    // human player functions
- //    function drawBoard(){
- //        for(var i = 0; i < cells.length; i++){
- //                var color = COLORS[board[i]];
- //                cells[i].style.backgroundColor = color;
- //        } 
- //    }
+	this.showInfo = function(){
+		var info = document.getElementById('info');
+		if(this.winner == HUMAN){
+		   info.innerHTML = "You win";
+		} else {
+			info.innerHTML = "You lose";
+		}
+		
+	}
 
- //    function init(){
- //        for(var i = 0; i < 6 * 7; i++){
- //                board[i] = 0;
- //            }
- //        drawBoard();
- //        takeTurns();
- //    }
+	this.isTaken = function(r, c){
+		return this.board[r][c] == HUMAN || this.board[r][c] == AI;
+	}
 
- //    function selectCel(e){
- //     var index = e.target.myIndex % 7;
- //     board[index] = INFO;
- //     drawBoard();
- //    }
- //    function deselectCel(e){
- //     var index = e.target.myIndex % 7;
- //     board[index] = 0;
- //     drawBoard();
- //    }
- //    function handleMove(e){
- //        var index = e.target.myIndex % 7;
- //        moveCel(index, HUMAN);
- //    }
- //    function moveCel(index, player){
- //     // get the index of cell in the first row;
- //     var cur = board[index];
- //     while(!isTaken(cur)){
- //         var nextIndex = index + 7;
- //         if(nextIndex >= board.length || isTaken(board[nextIndex])){
- //             board[index] = player;
- //             cur = board[index];
- //             turn = 1 - turn;
- //             console.log("now is computer")
- //         } else {
- //            index += 7;
- //            cur = board[index];
- //         }    
- //     }
- //     drawBoard();
- //     takeTurns();
- //    }
+	this.winner = null;
 
- //    function isTaken(x){
- //        return x == HUMAN || x == AI;
- //    }
+	this.checkWin = function(){
+		// horizontal
+		for(var i = 0; i < 6; i++){
+			for(var j = 0; j < 7 - 3; j++){
+				if(this.board[i][j] != 0 && this.board[i][j] == this.board[i][j+1] &&
+					this.board[i][j+1] == this.board[i][j+2] &&
+					this.board[i][j+2] == this.board[i][j+3])
+				{
+					this.turn = -1;
+					this.winner = this.board[i][j];
+					return true;		
+				}
+			}
+		}
+
+		// vertical
+		var j = 0;
+		while(j < 7){
+			for(var i = 0; i < 3; i++){
+				if(this.board[i][j] != 0 && this.board[i][j] == this.board[i+1][j]
+					&& this.board[i+1][j] == this.board[i+2][j]
+					&& this.board[i+2][j] == this.board[i+3][j])
+				{
+					this.turn = -1;
+					this.winner = this.board[i][j];
+					return true;
+				}
+			}
+			j += 1;
+		}
+
+		// diagonal
+		for(var i = 0; i < 3; i++){
+			for(var j = 0; j < 4; j++){
+				if(this.board[i][j] != 0 && 
+					this.board[i][j] == this.board[i+1][j+1] &&
+					this.board[i+1][j+1] == this.board[i+2][j+2]
+					&& this.board[i+3][j+3]){
+					this.turn = -1;
+			     	this.winner = this.board[i][j];
+				    return true;
+				}
+			}
+		}
+		for(var i = 0; i < 3; i++){
+			for(var j = 6; j > 2; j--){
+				if(this.board[i][j] != 0 &&
+					this.board[i][j] == this.board[i+1][j-1]
+					&& this.board[i+1][j-1] == this.board[i+2][j-2]
+					&& this.board[i+2][j-2] == this.board[i+3][j-3]){
+					this.turn = -1;
+				    this.winner = this.board[i][j];
+				    return true;
+				}
+			}
+		}
+
+	}
+
+};
 
 
- //    function computer(){
- //        var col = Math.floor(Math.random()* 7);
- //        console.log(col);
- //        moveCel(col, AI);
- //    }
+var game = new Game();
+game.init();
+var board = game.board;
 
-	// // var cells = document.getElementsByClassName("cell");
+var renderer = PIXI.autoDetectRenderer(560, 540, false, true);
 
-	// // for(var i = 0; i < cells.length; i++){
-	// // 	cells[i].style.backgroundColor = "white";
-	// // 	cells[i].addEventListener("mouseover", selectCel);
-	// // 	cells[i].addEventListener("mouseout", deselectCel);
-	// // 	cells[i].addEventListener("click", moveCel);
-	// // 	cells[i].myIndex = i;
-	// // }
-	// // function selectCel(e){
-	// // 	var index = e.target.myIndex % 7;
-	// // 	cells[index].style.background = "yellow";
-	// // }
-	// // function deselectCel(e){
-	// // 	var index = e.target.myIndex % 7;
-	// // 	cells[index].style.background = "white";
-	// // }
-
-	// // function moveCel(e){
-	// // 	// get the index of cell in the first row;
-	// // 	var index = e.target.myIndex % 7;
-	// // 	var curCel = cells[index];
-	// // 	while(!isFull(curCel)){
-	// // 		var nextIndex = index + 7;
-	// // 		if(nextIndex >= cells.length){
-	// // 			curCel.style.backgroundColor = "red";
-	// // 		} else if(isFull(cells[nextIndex])){
-	// // 			curCel.style.backgroundColor = "red";
-	// // 		} else {
-	// // 			index += 7;
-	// // 			curCel = cells[index];
-	// // 		}
-	// // 	}
-	// // }
-
-	// // function isFull(el){
-	// // 	console.log(el);
-	// // 	var color = el.style.backgroundColor;
-	// // 	if(color == "white" || color == "yellow"){
-	// // 		return false;
-	// // 	} else {
-	// // 		return true;
-	// // 	}
-	// // }
-
+//Add the canvas to the HTML document
+document.body.appendChild(renderer.view);
+var stage = new PIXI.Container(0xFFFFFF);
+function drawCircle(x, y, id, color){
+	var graphics = new PIXI.Graphics();
+	graphics.beginFill(color);
 	
-	</script>
+	graphics.drawCircle(x, y, 30);
+	graphics.endFill();
+	graphics.hitArea = new PIXI.Circle(x, y, 30);
+	graphics.interactive = true;
+	graphics.indexID = id;
+	graphics.alpha = 1;
+    stage.addChild(graphics);
+    graphics.on('click', handleClick);
+    graphics.on('mouseover', handleMouseOver);
+    graphics.on('mouseout', handleMouseLeave);
+}
+drawBoard();
+
+function handleClick(e){
+	if(game.turn == 0){
+		var graphics = e.target;
+		var id = e.target.indexID;
+		var i = id[0];
+		var j = id[1];
+		// var x = graphics.graphicsData[0].shape.x;
+		// var y = graphics.graphicsData[0].shape.y;
+		graphics.clear();
+		game.handleMove(j, HUMAN);
+		drawBoard();
+		game.handleAIMove();
+		drawBoard();
+		console.log(e.target.indexID);
+	}
+}
+
+function handleMouseOver(e){
+	e.data.target.alpha = 0.5;
+}
+
+function handleMouseLeave(e){
+	e.data.target.alpha = 1;
+}
+
+function drawBoard(){
+   var y = 0;
+   for(var i = 0; i < 6; i++){
+    y += 80;
+    var x = -40;
+    for(var j = 0; j < 7; j++){
+        x += 80;
+        var id = [i, j];
+        console.log(board[i][j]);
+        drawCircle(x, y, id, colors[board[i][j]]);
+    }
+}
+}
+
+
+
+
+
+
+// run the render loop
+animate();
+
+function animate() {
+
+    renderer.render(stage);
+    requestAnimationFrame( animate );
+}
+
+</script>
+	
 </body>
 </html>
