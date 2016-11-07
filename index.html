@@ -3,10 +3,16 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Document</title>
+	<style>
+	body{
+		background-color: #4C4C4C;
+		text-align: center;
+		padding-top:50px;
+	}
+	</style>
 </head>
 <body>
-<p id="info"></p>
-<canvas id="mycanvas"></canvas>
+
 <script src="http://pixijs.download/release/pixi.js"></script>
 <script>
 
@@ -17,6 +23,7 @@ const AI = 2;
 var Game = function() {
 	var that = this;
 	this.board = [];
+	this.score = [0,0];
 	this.turn = 0;  // 0 for human, 1 for ai;
 	this.init = function(){
 	  for(var i = 0; i < 6; i++)
@@ -58,18 +65,7 @@ var Game = function() {
 		if (r != 0) {
 		   this.board[r-1][c] = player; 
 		   this.turn = 1 - this.turn;
-		}
-		
-		
-	}
-
-	this.showInfo = function(){
-		var info = document.getElementById('info');
-		if(this.winner == HUMAN){
-		   info.innerHTML = "You win";
-		} else {
-			info.innerHTML = "You lose";
-		}
+		}	
 		
 	}
 
@@ -143,11 +139,13 @@ var Game = function() {
 
 var game = new Game();
 game.init();
+game.turn = -1;
 var board = game.board;
 
-var renderer = PIXI.autoDetectRenderer(562, 600, false, true);
+var renderer = PIXI.autoDetectRenderer(600, 640,{"antialias": true});
 renderer.backgroundColor = 0x1099bb;
 
+renderer.view.style.borderRadius = "30px";
 //Add the canvas to the HTML document
 document.body.appendChild(renderer.view);
 var stage = new PIXI.Container(0xFFFFFF);
@@ -169,10 +167,34 @@ var style = {
 };
 
 var basicText = new PIXI.Text('CONNECT 4',style);
-basicText.x = 150;
+basicText.x = 180;
 basicText.y = 40;
 
 stage.addChild(basicText);
+
+
+function drawButton(){
+	
+	var button = new PIXI.Text('Start', style);
+	button.x = 240;
+    button.y = 120;
+    button.interactive = true;
+    button.on('click', handleButtonClick);
+    stage.addChild(button);
+   
+
+    
+}
+
+function handleButtonClick(e){
+	var button = e.target;
+	console.log(button);
+	if(button.text == 'Start'){
+		game.turn = 0;
+		button.visible = false;
+	}
+}
+
 
 
 function drawCircle(x, y, id, sprite){
@@ -181,39 +203,33 @@ function drawCircle(x, y, id, sprite){
 	graphics.drawCircle(x, y, 30);
 	graphics.endFill();
     stage.addChild(graphics);
-    var dogface = PIXI.Sprite.fromImage(sprite);
-    dogface.width = 60;
-	dogface.height = 60;
-	dogface.position.x = x-30;
-	dogface.position.y = y-30;
-	stage.addChild(dogface);
-	dogface.mask = graphics;
-	dogface.interactive = true;
-	dogface.indexID = id;
+    var player = PIXI.Sprite.fromImage(sprite);
+    player.width = 60;
+	player.height = 60;
+	player.position.x = x-30;
+	player.position.y = y-30;
+	stage.addChild(player);
+	player.mask = graphics;
+	player.interactive = true;
+	player.indexID = id;
     
-    dogface.on('click', handleClick);
-    dogface.on('mouseover', handleMouseOver);
-    dogface.on('mouseout', handleMouseLeave);
+    player.on('click', handleClick);
+    player.on('mouseover', handleMouseOver);
+    player.on('mouseout', handleMouseLeave);
 }
-
-
-
 
 drawBoard();
 
 function getSprites(){
 	var children = stage.children;
 	var sprites = []
-	for(var i = 2; i < children.length; i+=2){
+	for(var i = 2; i < children.length-1; i+=2){
 		sprites.push(children[i]);
 	}
 	return sprites;
 }
 
-var children = stage.children;
-console.log(children[2].position.x);
-//children[2].anchor.x = 0.5
-console.log(children[2].anchor.x)
+console.log(stage.children);
 
 function handleClick(e){
 
@@ -257,10 +273,10 @@ function handleMouseLeave(e){
 }
 
 function drawBoard(){
-   var y = 80;
+   var y = 160;
    for(var i = 0; i < 6; i++){
-    y += 80;
-    var x = -40;
+    y += 70;
+    var x = -20;
     for(var j = 0; j < 7; j++){
         x += 80;
         var id = [i, j];
@@ -278,8 +294,17 @@ function drawSingle(row,col,color){
 
 
 function showWin(){
-	basicText.text = "You Win!!!";
+	if(game.winner == HUMAN){
+		basicText.text = "You Win  !!!";
+	} else {
+		basicText.text = "You were beated"
+	}
+	console.log(game.winner);
+	
 }
+
+drawButton();
+
 
 // run the render loop
 animate();
