@@ -10,7 +10,7 @@
 <script src="http://pixijs.download/release/pixi.js"></script>
 <script>
 
-const colors = [0xffffff, 0xfffff, 0xff0000];
+const colors = ['FFFFFF.png', 'grinning-face.png', 'dog-face.png'];
 const HUMAN = 1;
 const AI = 2;
 
@@ -60,11 +60,7 @@ var Game = function() {
 		   this.turn = 1 - this.turn;
 		}
 		
-		console.log("check");
-		if(this.checkWin()){
-			console.log("win");
-			this.showInfo();
-		}
+		
 	}
 
 	this.showInfo = function(){
@@ -149,80 +145,154 @@ var game = new Game();
 game.init();
 var board = game.board;
 
-var renderer = PIXI.autoDetectRenderer(560, 540, false, true);
+var renderer = PIXI.autoDetectRenderer(562, 600, false, true);
+renderer.backgroundColor = 0x1099bb;
 
 //Add the canvas to the HTML document
 document.body.appendChild(renderer.view);
 var stage = new PIXI.Container(0xFFFFFF);
-function drawCircle(x, y, id, color){
+
+var style = {
+    fontFamily : 'Arial',
+    fontSize : '36px',
+    fontStyle : 'italic',
+    fontWeight : 'bold',
+    fill : '#F7EDCA',
+    stroke : '#4a1850',
+    strokeThickness : 5,
+    dropShadow : true,
+    dropShadowColor : '#000000',
+    dropShadowAngle : Math.PI / 6,
+    dropShadowDistance : 6,
+    wordWrap : true,
+    wordWrapWidth : 440
+};
+
+var basicText = new PIXI.Text('CONNECT 4',style);
+basicText.x = 150;
+basicText.y = 40;
+
+stage.addChild(basicText);
+
+
+function drawCircle(x, y, id, sprite){
 	var graphics = new PIXI.Graphics();
-	graphics.beginFill(color);
-	
+	graphics.beginFill(0xffffff);
 	graphics.drawCircle(x, y, 30);
 	graphics.endFill();
-	graphics.hitArea = new PIXI.Circle(x, y, 30);
-	graphics.interactive = true;
-	graphics.indexID = id;
-	graphics.alpha = 1;
     stage.addChild(graphics);
-    graphics.on('click', handleClick);
-    graphics.on('mouseover', handleMouseOver);
-    graphics.on('mouseout', handleMouseLeave);
+    var dogface = PIXI.Sprite.fromImage(sprite);
+    dogface.width = 60;
+	dogface.height = 60;
+	dogface.position.x = x-30;
+	dogface.position.y = y-30;
+	stage.addChild(dogface);
+	dogface.mask = graphics;
+	dogface.interactive = true;
+	dogface.indexID = id;
+    
+    dogface.on('click', handleClick);
+    dogface.on('mouseover', handleMouseOver);
+    dogface.on('mouseout', handleMouseLeave);
 }
+
+
+
+
 drawBoard();
 
+function getSprites(){
+	var children = stage.children;
+	var sprites = []
+	for(var i = 2; i < children.length; i+=2){
+		sprites.push(children[i]);
+	}
+	return sprites;
+}
+
+var children = stage.children;
+console.log(children[2].position.x);
+//children[2].anchor.x = 0.5
+console.log(children[2].anchor.x)
+
 function handleClick(e){
+
 	if(game.turn == 0){
-		var graphics = e.target;
 		var id = e.target.indexID;
 		var i = id[0];
 		var j = id[1];
-		// var x = graphics.graphicsData[0].shape.x;
-		// var y = graphics.graphicsData[0].shape.y;
-		graphics.clear();
 		game.handleMove(j, HUMAN);
 		drawBoard();
 		game.handleAIMove();
 		drawBoard();
-		console.log(e.target.indexID);
+
+		console.log("check");
+		if(game.checkWin()){
+			console.log("win");
+			
+		}	
 	}
 }
 
 function handleMouseOver(e){
-	e.data.target.alpha = 0.5;
+	var col = e.data.target.indexID[1];
+	console.log(col);
+	var sprites = getSprites();
+	for(var i = 0; i < sprites.length; i++){
+		if (i % 7 == col){
+			sprites[i].alpha = 0.2;
+		}
+	}
 }
 
 function handleMouseLeave(e){
-	e.data.target.alpha = 1;
+	var col = e.data.target.indexID[1];
+	console.log(col);
+	var sprites = getSprites();
+	for(var i = 0; i < sprites.length; i++){
+		if (i % 7 == col){
+			sprites[i].alpha = 1;
+		}
+	}
 }
 
 function drawBoard(){
-   var y = 0;
+   var y = 80;
    for(var i = 0; i < 6; i++){
     y += 80;
     var x = -40;
     for(var j = 0; j < 7; j++){
         x += 80;
         var id = [i, j];
-        console.log(board[i][j]);
         drawCircle(x, y, id, colors[board[i][j]]);
     }
 }
 }
 
+function drawSingle(row,col,color){
+	y = 80 * (row+1);
+	x = -40 + 80 * (col+1);
+	
+	drawCircle(x, y, [row, col],color);
+}
 
 
-
-
+function showWin(){
+	basicText.text = "You Win!!!";
+}
 
 // run the render loop
 animate();
 
 function animate() {
-
+	if(game.checkWin()){
+		showWin();
+	}
+	
     renderer.render(stage);
     requestAnimationFrame( animate );
 }
+
 
 </script>
 	
