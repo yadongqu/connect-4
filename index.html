@@ -5,7 +5,7 @@
 	<title>Document</title>
 	<style>
 	body{
-		background-color: #4C4C4C;
+		background-color: #1099bb;
 		text-align: center;
 		padding-top:50px;
 		cursor: pointer;
@@ -195,10 +195,9 @@ function drawTitle(){
 }
 drawTitle();
 
-
-
-function drawButton(){
-    var button = PIXI.Sprite.fromImage("startbutton.png");
+let button;
+function drawButton(img){
+    button = PIXI.Sprite.fromImage(img);
     button.scale.set(0.5);
     button.x = 220;
     button.y = 90;
@@ -209,6 +208,7 @@ function drawButton(){
     stage.addChild(button);   
 }
 
+drawButton("startbutton.png");
 function handleButtonMouseOut(e){
 	e.data.target.scale.set(0.5, 0.5);
 }
@@ -220,22 +220,42 @@ function handleButtonMouseOver(e){
 
 function handleButtonClick(e){
 	e.target.scale.set(0.6, 0.6);
+	e.target.visible = false;
+	game.init();
+	drawBoard();
+	game.turn = 0;
 }
 
 
+let score, round;
 function drawScoreAndRound(){
-	var score = new PIXI.Text('Score: ' + game.score);
+	var titleStyle = {
+    fontFamily : 'Arial',
+    fontSize : '26px',
+    fontStyle : 'italic',
+    fontWeight : 'bold',
+    fill : '#F7EDCA',
+    stroke : '#4a1850',
+    strokeThickness : 5,
+    dropShadow : true,
+    dropShadowColor : '#000000',
+    dropShadowAngle : Math.PI / 6,
+    dropShadowDistance : 6,
+    wordWrap : true,
+    wordWrapWidth : 440
+	};
+    score = new PIXI.Text('Score: ' + game.score, titleStyle);
 	score.x = 40;
 	score.y = 180;
 	stage.addChild(score);
 
-	var round = new PIXI.Text('Round: ' + game.total);
+	round = new PIXI.Text('Round: ' + game.total, titleStyle);
 	round.x = 440;
 	round.y = 180;
 	stage.addChild(round);
 }
-
 drawScoreAndRound();
+
 
 
 
@@ -287,7 +307,8 @@ function handleClick(e){
 		console.log("check");
 		if(game.checkWin()){
 			console.log("win");
-			
+			showWin();
+			button.visible = true;
 		}	
 	}
 }
@@ -324,7 +345,7 @@ function drawBoard(){
         var id = [i, j];
         drawCircle(x, y, id, colors[board[i][j]]);
     }
-}
+   }
 }
 
 function drawSingle(row,col,color){
@@ -338,21 +359,21 @@ function drawSingle(row,col,color){
 function showWin(){
 	if(game.winner == HUMAN){
 		stage.getChildAt(0).text = "You Win  !!!";
+		score.text = "Score: " + game.score;
+	    round.text = "Round: " + game.total;
 	} else {
-		stage.getChildAt(0).text = "You were beated"
+		stage.getChildAt(0).text = "You were beated";
 	}
+	
+
 	console.log(game.winner);
 	
 }
 
-drawButton();
+
 animate();
 
-function animate() {
-	if(game.checkWin()){
-		showWin();
-	}
-	
+function animate() {	
     renderer.render(stage);
     requestAnimationFrame( animate );
 }
