@@ -8,6 +8,7 @@
 		background-color: #4C4C4C;
 		text-align: center;
 		padding-top:50px;
+		cursor: pointer;
 	}
 	</style>
 </head>
@@ -23,7 +24,9 @@ const AI = 2;
 var Game = function() {
 	var that = this;
 	this.board = [];
-	this.score = [0,0];
+	this.score = 0;
+	this.total = 0;
+	this.count = 0;
 	this.turn = 0;  // 0 for human, 1 for ai;
 	this.init = function(){
 	  for(var i = 0; i < 6; i++)
@@ -35,6 +38,14 @@ var Game = function() {
 		}
 	  }
 	};
+
+	this.setCount = function(){
+		if(this.winner == HUMAN){
+			this.count += 1;
+			this.score = this.count * 100;
+		}
+		this.total += 1;
+	}
 
 	this.handleAIMove = function(c){
 		if(this.turn == 1){
@@ -65,6 +76,10 @@ var Game = function() {
 		if (r != 0) {
 		   this.board[r-1][c] = player; 
 		   this.turn = 1 - this.turn;
+		}
+		if(r == 0){
+			this.board[r][c] = player;
+			this.turn = 1 - this.turn;
 		}	
 		
 	}
@@ -85,6 +100,7 @@ var Game = function() {
 				{
 					this.turn = -1;
 					this.winner = this.board[i][j];
+					this.setCount();
 					return true;		
 				}
 			}
@@ -100,6 +116,7 @@ var Game = function() {
 				{
 					this.turn = -1;
 					this.winner = this.board[i][j];
+					this.setCount();
 					return true;
 				}
 			}
@@ -115,6 +132,7 @@ var Game = function() {
 					&& this.board[i+3][j+3]){
 					this.turn = -1;
 			     	this.winner = this.board[i][j];
+			     	this.setCount();
 				    return true;
 				}
 			}
@@ -127,6 +145,7 @@ var Game = function() {
 					&& this.board[i+2][j-2] == this.board[i+3][j-3]){
 					this.turn = -1;
 				    this.winner = this.board[i][j];
+				    this.setCount();
 				    return true;
 				}
 			}
@@ -142,7 +161,7 @@ game.init();
 game.turn = -1;
 var board = game.board;
 
-var renderer = PIXI.autoDetectRenderer(600, 640,{"antialias": true});
+var renderer = PIXI.autoDetectRenderer(600, 700,{"antialias": true});
 renderer.backgroundColor = 0x1099bb;
 
 renderer.view.style.borderRadius = "30px";
@@ -150,7 +169,9 @@ renderer.view.style.borderRadius = "30px";
 document.body.appendChild(renderer.view);
 var stage = new PIXI.Container(0xFFFFFF);
 
-var style = {
+
+function drawTitle(){
+	var titleStyle = {
     fontFamily : 'Arial',
     fontSize : '36px',
     fontStyle : 'italic',
@@ -164,36 +185,57 @@ var style = {
     dropShadowDistance : 6,
     wordWrap : true,
     wordWrapWidth : 440
-};
+	};
 
-var basicText = new PIXI.Text('CONNECT 4',style);
-basicText.x = 180;
-basicText.y = 40;
+	var basicText = new PIXI.Text('CONNECT 4',titleStyle);
+	basicText.x = 180;
+	basicText.y = 30;
+	basicText.name = "title";
+	stage.addChild(basicText);
+}
+drawTitle();
 
-stage.addChild(basicText);
 
 
 function drawButton(){
-	
-	var button = new PIXI.Text('Start', style);
-	button.x = 240;
-    button.y = 120;
+    var button = PIXI.Sprite.fromImage("startbutton.png");
+    button.scale.set(0.5);
+    button.x = 220;
+    button.y = 90;
     button.interactive = true;
+    button.on('mouseover',handleButtonMouseOver);
+    button.on('mouseout',handleButtonMouseOut);
     button.on('click', handleButtonClick);
-    stage.addChild(button);
-   
-
-    
+    stage.addChild(button);   
 }
+
+function handleButtonMouseOut(e){
+	e.data.target.scale.set(0.5, 0.5);
+}
+
+function handleButtonMouseOver(e){
+	e.data.target.scale.set(0.6, 0.6);
+}
+
 
 function handleButtonClick(e){
-	var button = e.target;
-	console.log(button);
-	if(button.text == 'Start'){
-		game.turn = 0;
-		button.visible = false;
-	}
+	e.target.scale.set(0.6, 0.6);
 }
+
+
+function drawScoreAndRound(){
+	var score = new PIXI.Text('Score: ' + game.score);
+	score.x = 40;
+	score.y = 180;
+	stage.addChild(score);
+
+	var round = new PIXI.Text('Round: ' + game.total);
+	round.x = 440;
+	round.y = 180;
+	stage.addChild(round);
+}
+
+drawScoreAndRound();
 
 
 
@@ -229,7 +271,7 @@ function getSprites(){
 	return sprites;
 }
 
-console.log(stage.children);
+
 
 function handleClick(e){
 
@@ -273,7 +315,7 @@ function handleMouseLeave(e){
 }
 
 function drawBoard(){
-   var y = 160;
+   var y = 200;
    for(var i = 0; i < 6; i++){
     y += 70;
     var x = -20;
@@ -295,18 +337,15 @@ function drawSingle(row,col,color){
 
 function showWin(){
 	if(game.winner == HUMAN){
-		basicText.text = "You Win  !!!";
+		stage.getChildAt(0).text = "You Win  !!!";
 	} else {
-		basicText.text = "You were beated"
+		stage.getChildAt(0).text = "You were beated"
 	}
 	console.log(game.winner);
 	
 }
 
 drawButton();
-
-
-// run the render loop
 animate();
 
 function animate() {
