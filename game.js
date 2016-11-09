@@ -18,6 +18,8 @@ var Game = function() {
         [3, 4, 5, 7, 5, 4, 3]
         ];
 
+
+
 	this.init = function(){
 	  for(var i = 0; i < 6; i++)
 	  {
