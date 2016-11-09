@@ -172,8 +172,8 @@ function handleClick(e){
 		var j = id[1];
 		game.play(j);
 		drawBoard();
-		if(game.hasWon()){
-			showWin();
+		if(game.hasWon() || game.hasDrawn()){
+			showWinOrDraw();
 			endSound.play();
 		}	
 	}
@@ -212,13 +212,15 @@ function drawBoard(){
    }
 }
 
-function showWin(){
+function showWinOrDraw(){
 	if(game.winner == HUMAN){
 		stage.getChildAt(0).text = "You Won  !!!";
 		score.text = "Score: " + game.score;
 	    round.text = "Round: " + game.total;
-	} else {
+	} else if (game.winner == AI) {
 		stage.getChildAt(0).text = "You were beated";
+	} else {
+		stage.getChildAt(0).text = "It's a Drawn";
 	}
 }
 
